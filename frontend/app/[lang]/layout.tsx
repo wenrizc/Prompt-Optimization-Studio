@@ -2,8 +2,8 @@ import { notFound } from "next/navigation";
 import { PropsWithChildren } from "react";
 
 import { isLocale, Locale } from "@/lib/i18n/config";
-import { getMessages } from "@/lib/i18n/messages";
 import { I18nProvider } from "@/lib/i18n/provider";
+import { getMessages } from "@/lib/i18n/messages";
 
 export function generateStaticParams() {
   return [{ lang: "en" }, { lang: "zh" }];
@@ -18,5 +18,10 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  return <I18nProvider locale={lang as Locale} messages={getMessages(lang as Locale)}>{children}</I18nProvider>;
+  const locale = lang as Locale;
+  return (
+    <I18nProvider locale={locale} messages={getMessages(locale)}>
+      {children}
+    </I18nProvider>
+  );
 }

@@ -8,14 +8,12 @@ import { Locale, locales, useI18n } from "@/lib/i18n/provider";
 const navItems = [
   { href: "/", key: "nav.home" },
   { href: "/projects", key: "nav.projects" },
-  { href: "/datasets/generator", key: "nav.datasetGenerator" },
-  { href: "/datasets/import", key: "nav.datasetImport" },
-  { href: "/datasets/editor", key: "nav.datasetEditor" },
+  { href: "/custom-tasks", key: "nav.customTasks" },
+  { href: "/datasets", key: "nav.datasets" },
   { href: "/prompts", key: "nav.prompts" },
-  { href: "/evaluations", key: "nav.evaluations" },
-  { href: "/optimization-runs", key: "nav.optimizationRuns" },
+  { href: "/runs", key: "nav.runs" },
   { href: "/reports", key: "nav.reports" },
-  { href: "/run-comparison", key: "nav.runComparison" },
+  { href: "/tutorial", key: "nav.tutorial" },
 ];
 
 export function AppShell({ children }: PropsWithChildren) {

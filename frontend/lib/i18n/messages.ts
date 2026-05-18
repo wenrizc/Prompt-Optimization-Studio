@@ -5,6 +5,7 @@ export const messages = {
     app: {
       name: "Prompt Optimization Studio",
       shellTitle: "Local Prompt Workflow Console",
+      description: "Local workflow console for prompt evaluation and optimization",
       language: "Language",
       english: "English",
       chinese: "中文",
@@ -12,14 +13,12 @@ export const messages = {
     nav: {
       home: "Overview",
       projects: "Projects",
-      datasetGenerator: "Dataset Generator",
-      datasetImport: "Dataset Import",
-      datasetEditor: "Dataset Editor",
+      customTasks: "Custom Tasks",
+      datasets: "Datasets",
+      runs: "Runs",
       prompts: "Prompt Studio",
-      evaluations: "Baseline Evaluation",
-      optimizationRuns: "Optimization Runs",
       reports: "Reports",
-      runComparison: "Run Comparison",
+      tutorial: "Tutorial",
     },
     common: {
       loadError: "Load Error",
@@ -48,10 +47,19 @@ export const messages = {
         cancel_requested: "Cancel Requested",
         active: "Active",
         archived: "Archived",
-        accepted: "Accepted",
-        rejected: "Rejected",
-        unchecked: "Unchecked",
-        needs_review: "Needs Review",
+      },
+      split: {
+        train: "Train",
+        dev: "Dev",
+        test: "Test",
+        unassigned: "Unassigned",
+      },
+      datasetSource: {
+        manual_upload: "Manual Upload",
+        synthetic_generated: "Synthetic Generated",
+        edited: "Edited",
+        imported: "Imported",
+        manual: "Manual",
       },
       workspace: {
         project: "Project",
@@ -65,7 +73,7 @@ export const messages = {
     home: {
       title: "Studio Overview",
       description:
-        "Monitor the entire prompt-optimization workflow from one landing page: project setup, dataset readiness, baseline health, optimizer progress, and recent execution signals.",
+        "Start from the next workflow step instead of browsing raw system resources. This page keeps only the signals most users need first.",
       metrics: {
         activeProjects: "Active Projects",
         activeProjectsHint: "{count} total project definitions",
@@ -87,14 +95,9 @@ export const messages = {
             description: "Define task type, schemas, and metric defaults.",
           },
           {
-            href: "/datasets/import",
-            title: "Import Dataset",
-            description: "Bring in real examples for trustworthy evaluation.",
-          },
-          {
-            href: "/datasets/generator",
-            title: "Generate Synthetic Data",
-            description: "Bootstrap a dataset with the configured LLM.",
+            href: "/datasets",
+            title: "Prepare Dataset",
+            description: "Import real samples or generate a synthetic starter set.",
           },
           {
             href: "/prompts",
@@ -102,14 +105,9 @@ export const messages = {
             description: "Version prompts and validate output contracts.",
           },
           {
-            href: "/evaluations",
-            title: "Run Baseline",
-            description: "Check parseability and score quality before optimizing.",
-          },
-          {
-            href: "/optimization-runs",
-            title: "Launch Optimizer",
-            description: "Run BootstrapFewShot, MIPROv2, or GEPA.",
+            href: "/runs",
+            title: "Launch Runs",
+            description: "Queue a baseline evaluation or optimization run from one place.",
           },
         ],
       },
@@ -121,16 +119,28 @@ export const messages = {
         openReport: "Open Report Viewer",
         empty: "No successful optimization runs yet.",
       },
-      trustSnapshot: {
-        title: "Dataset Trust Snapshot",
-        description: "Watch which datasets are synthetic-only, reviewed, or ready for higher-confidence evaluation.",
-        empty: "No datasets loaded yet.",
-      },
-      recentLogs: {
-        title: "Recent Execution Log",
-        description: "Follow the latest worker and run activity across evaluations and optimizer runs.",
-        empty: "No recent logs yet.",
-      },
+      workflowTitle: "Recommended Workflow",
+      workflowDescription: "Follow the main setup sequence and leave diagnostics for the dedicated workspace pages.",
+      workflowSteps: [
+        {
+          title: "Choose or create a project",
+          description: "Start with a built-in task template, then only open advanced JSON config if your task truly needs it.",
+        },
+        {
+          title: "Prepare a usable dataset",
+          description: "Use one dataset hub for import, generation, sample inspection, and maintenance tools.",
+        },
+        {
+          title: "Version the prompt and run experiments",
+          description: "Keep prompt edits, baseline evaluations, and optimizer runs close to the workflow instead of scattered pages.",
+        },
+      ],
+      stepLabel: "Step {step}",
+      workspaceSnapshotTitle: "Workspace Snapshot",
+      workspaceSnapshotDescription: "A compact count-based summary plus the most recent optimization runs.",
+      workspaceSnapshotEmpty: "No workspace activity yet.",
+      latestRunsTitle: "Latest Optimization Runs",
+      latestRunsEmpty: "No optimization runs yet.",
     },
     projects: {
       registryTitle: "Project Registry",
@@ -139,9 +149,16 @@ export const messages = {
       namePlaceholder: "Project name",
       taskKindBuiltin: "Built-in task",
       taskKindCustom: "Custom task",
-      taskDisplayName: "Classification",
+      taskKeyPlaceholder: "task_key",
       descriptionPlaceholder: "Business context",
-      taskDescriptionPlaceholder: "Task description",
+      customTasksLink: "Open Custom Tasks",
+      customTemplateEmpty: "No custom task template yet. Create one on the dedicated page first.",
+      customTemplateRequired: "Please select a custom task template before creating the project.",
+      readonlyConfigTitle: "Task Contract Defaults",
+      readonlyBuiltinHint: "These are the built-in defaults used by the selected task. They are read-only here.",
+      readonlyCustomHint: "These values come from the selected custom task template. Edit them on the Custom Tasks page.",
+      taskSummaryLabel: "Task",
+      taskDescriptionLabel: "Task Description",
       createButton: "Create Project",
       creatingButton: "Creating...",
       createdMessage: "Created project #{id}",
@@ -150,6 +167,122 @@ export const messages = {
         "Pick the active project for the rest of the console. The selection is kept locally in your browser.",
       selectedSnapshot: "Selected Project Snapshot",
       selectedEmpty: "Select a project to inspect its schemas and defaults.",
+      builtinTaskText: {
+        qa: {
+          taskDisplayName: "Question Answering",
+          taskDescription:
+            "Answer the question grounded in the provided text and return a concise answer.",
+        },
+        json_generation: {
+          taskDisplayName: "JSON Generation",
+          taskDescription:
+            "Generate a JSON object that follows the requested structure and stays machine-parseable.",
+        },
+        rate: {
+          taskDisplayName: "Rating",
+          taskDescription:
+            "Score the input against the rubric and return a numeric score plus concise reasoning.",
+        },
+      },
+    },
+    customTasks: {
+      catalogTitle: "Custom Task Templates",
+      catalogDescription:
+        "Move custom schema, metric, and report configuration out of the main project flow and manage it in one dedicated page.",
+      newTemplateButton: "Create New Template",
+      noTaskDescription: "No task description yet.",
+      emptyState: "No custom task template has been created yet.",
+      editorTitle: "Template Editor",
+      editorDescription:
+        "Define the full custom task contract here. Projects will only select from these saved templates.",
+      draftTitle: "Generate Draft from Natural Language",
+      draftDescription:
+        "Describe the task in plain language and let the model prepare a complete contract draft. Review each section before writing it into the editor.",
+      draftPromptPlaceholder:
+        "Example: Build a Chinese customer-support QA task. Input is a user question, output is a concise answer field, and evaluation should focus on answer correctness.",
+      generateButton: "Generate Draft",
+      generatingButton: "Generating...",
+      contractTitle: "Contract Walkthrough",
+      contractDescription:
+        "Only one configuration item is shown at a time. Use the mouse wheel or the step rail to move through the contract.",
+      scrollHint: "Scroll to switch items",
+      stepCounter: "Step {current} / {total}",
+      detailCounter: "Card {current} / {total}",
+      configurableFieldsTitle: "Configurable Fields",
+      downstreamUsageTitle: "How It Will Be Used Later",
+      examplesTitle: "Examples",
+      editorPaneTitle: "Current Editor",
+      prevDetailButton: "Previous Card",
+      nextDetailButton: "Next Card",
+      aiDraftTitle: "AI Draft Suggestion",
+      acceptCurrentButton: "Accept Current Item",
+      acceptAndNextButton: "Accept and Next",
+      skipCurrentButton: "Skip This Item",
+      draftAccepted: "Accepted",
+      draftPending: "Pending review",
+      noGuidanceForStep: "The generated draft did not include a dedicated explanation for this section.",
+      previewDescription: "Shows the current in-memory contract. If a saved template is selected, the panel reflects the stored record.",
+      taskDisplayPlaceholder: "Display name",
+      taskDescriptionPlaceholder: "Task description",
+      saveButton: "Save Template",
+      deleteButton: "Delete Template",
+      savedMessage: "Custom task template saved.",
+      deletedMessage: "Custom task template deleted.",
+      previewTitle: "Saved Preview",
+      previewEmpty: "Save a template to preview its stored contract.",
+      steps: {
+        taskIdentity: {
+          title: "Task Identity",
+          summary:
+            "This section names the template and explains the business goal. It is the first thing project creators will see when choosing a template.",
+          usage1: "Used as the stable template identifier when projects reference this contract.",
+          usage2: "Displayed in project creation, template lists, and future workspace summaries.",
+          usage3: "Helps humans understand scope before editing schema and metrics.",
+        },
+        inputSchema: {
+          title: "Input Schema",
+          summary:
+            "Defines the JSON shape that each dataset example must provide to the prompt. Keep it minimal and strongly typed.",
+          usage1: "Used when importing datasets to validate input example structure.",
+          usage2: "Used by prompt templates to understand what variables can be referenced.",
+          usage3: "Guides synthetic data generation and future tooling around input forms.",
+        },
+        outputSchema: {
+          title: "Output Schema",
+          summary:
+            "Defines the JSON object the model is expected to produce. All later metric and reporting fields should point back to this schema.",
+          usage1: "Used during prompt validation and output parsing.",
+          usage2: "Used by evaluation to detect schema mismatch and parse errors.",
+          usage3: "Acts as the source of truth for metric field selection and report summaries.",
+        },
+        metric: {
+          title: "Metric Configuration",
+          summary:
+            "Defines how the platform scores model outputs against expected outputs. The field you reference here should exist in the output schema.",
+          usage1: "Used by evaluation jobs to compute score and correctness.",
+          usage2: "Used to determine pass/fail thresholds during comparisons.",
+          usage3: "Shapes optimization feedback because prompt quality is judged through this metric.",
+        },
+        taskDefinition: {
+          title: "Task Definition",
+          summary:
+            "Adds task-level semantics that describe what the platform should treat as the main target of the task.",
+          usage1: "Used by task-aware services to infer the main prediction field.",
+          usage2: "Helps optimization and generation components understand the intended task family.",
+          usage3: "Provides room for future task-specific behavior without changing the editor contract.",
+        },
+        reportProfile: {
+          title: "Report Profile",
+          summary:
+            "Controls how evaluation and optimization reports highlight output fields and quality dimensions for this task.",
+          usage1: "Used when summarizing evaluation results and spotlighting the main output field.",
+          usage2: "Used to decide which focus areas appear in future report narratives.",
+          usage3: "Keeps downstream reporting aligned with the output field and task intent.",
+        },
+      },
+      detailCards: {
+        summary: "Overview",
+      },
     },
     prompts: {
       title: "Prompt Studio",
@@ -158,9 +291,6 @@ export const messages = {
       createTitle: "Create Prompt Version",
       createDescription: "Create a new prompt record for the active project.",
       promptNameDefault: "baseline",
-      statusDraft: "Draft",
-      statusActive: "Active",
-      statusArchived: "Archived",
       defaultSystemPrompt: "You are a precise task assistant.",
       defaultUserTemplate: "Classify the following request:\n{text}",
       saveButton: "Save Prompt",
@@ -175,10 +305,28 @@ export const messages = {
       validationOutput: "Validation Output",
     },
     datasets: {
+      hub: {
+        title: "Dataset Workspace",
+        description:
+          "Use one page for dataset import, synthetic generation, selection, and maintenance. Advanced review tools stay available but out of the main path.",
+        prepareTitle: "Prepare Dataset",
+        prepareDescription: "Switch between import and synthetic generation without changing pages.",
+        importTab: "Import",
+        generateTab: "Generate",
+        lastActionTitle: "Last Action Response",
+        lastActionEmpty: "Run an import or generation action to inspect the backend payload.",
+        listTitle: "Project Datasets",
+        listDescription: "Keep dataset selection visible while avoiding a separate editor-first page.",
+        selectedDatasetTitle: "Selected Dataset Snapshot",
+        selectedDatasetEmpty: "Select a dataset to inspect its metadata.",
+        advancedTitle: "Advanced Dataset Tools",
+        advancedDescription: "Quality reports, example edits, and re-splitting are available on demand.",
+        advancedToggle: "Open maintenance tools",
+      },
       generator: {
         title: "Dataset Generator",
         description:
-          "Generate synthetic datasets through the backend. Switch `generation_model` from `mock` to an OpenAI-compatible model when your backend environment is configured.",
+          "Generate synthetic datasets through the backend. The primary flow uses the backend environment configuration directly, so the page no longer exposes model selection.",
         formTitle: "Generate Synthetic Dataset",
         formDescription:
           "Use a natural-language command to seed a synthetic dataset for the active project.",
@@ -220,13 +368,11 @@ export const messages = {
       editor: {
         title: "Dataset Editor",
         description:
-          "Inspect imported or generated examples, re-split the dataset, and bulk-review the first batch of samples.",
+          "Inspect imported or generated examples, re-split the dataset, and adjust sample content directly.",
         previewTitle: "Example Preview",
         previewDescription:
-          "The current editor exposes the first 100 records through the API and lets you run quick review, edit, and split actions.",
+          "The current editor exposes the first 100 records through the API and lets you edit content and manage splits quickly.",
         refreshExamples: "Refresh Examples",
-        acceptFirst20: "Accept First 20",
-        markFirst20NeedsReview: "Mark First 20 Needs Review",
         resplit: "Re-split 60 / 20 / 20",
         diagnosticsTitle: "Dataset Diagnostics",
         diagnosticsDescription:
@@ -240,13 +386,33 @@ export const messages = {
         qualityReportEmpty: "Refresh a dataset to load its quality report.",
       },
     },
+    runs: {
+      hub: {
+        title: "Run Workspace",
+        description:
+          "Queue evaluations and optimization runs from one page, then open advanced logs and raw reports only when you need to debug.",
+        launchTitle: "Launch Run",
+        launchDescription: "Choose the run type first, then fill in the relevant configuration for that workflow.",
+        evaluationTab: "Evaluation",
+        optimizationTab: "Optimization",
+        queueTitle: "Recent Queue",
+        queueDescription: "Track status in the same workspace where the run was created.",
+        advancedTitle: "Advanced Diagnostics",
+        advancedDescription: "Raw reports and execution logs remain available without dominating the default layout.",
+        advancedToggle: "Open diagnostics",
+        selectedRunTitle: "Selected Run Snapshot",
+        selectedRunEmpty: "Select a run from the queue to inspect its details.",
+        reportTitle: "Stored Report",
+        logsTitle: "Run Logs",
+      },
+    },
     evaluations: {
       title: "Baseline Evaluation",
       description:
-        "Queue baseline runs, switch between mock and real OpenAI-backed execution, then inspect logs and reports from one page.",
+        "Queue baseline runs with the project metric and backend model defaults, then inspect logs and reports from one page.",
       queueTitle: "Queue Evaluation",
       queueDescription:
-        "Use `provider=openai` with an OpenAI-compatible `model` once your backend env is configured.",
+        "The evaluation uses the project's default metric and the backend model environment automatically.",
       queueButton: "Queue Evaluation",
       queuedMessage: "Queued evaluation #{id}",
       workerProcessed: "Worker processed {count} jobs.",
@@ -267,10 +433,10 @@ export const messages = {
     optimization: {
       title: "Optimization Runs",
       description:
-        "Queue BootstrapFewShot, MIPROv2, or GEPA runs. Use `provider=openai` and an OpenAI-compatible model to hit the real DSPy path.",
+        "Queue BootstrapFewShot, MIPROv2, or GEPA runs. Runtime model selection comes from the backend environment.",
       queueTitle: "Queue Optimizer Run",
       queueDescription:
-        "Tune metric and optimizer config directly from the UI. GEPA accepts feedback-rich metrics through the metric config JSON.",
+        "The run uses the project's default metric automatically. Keep the optimizer config for advanced tuning only.",
       queueButton: "Queue Optimization Run",
       queuedMessage: "Queued optimization run #{id}",
       workerProcessed: "Worker processed {count} jobs.",
@@ -305,13 +471,28 @@ export const messages = {
         "Focus on reliability warnings, failed examples, and regressions before trusting the score.",
       artifactsTitle: "Artifacts",
       artifactsDescription:
-        "Browse generated artifacts, inspect contents inline, or open the raw file response directly.",
+        "Browse generated artifacts, inspect contents inline, or open the raw file response directly when deeper debugging is needed.",
+      evaluationArtifactsTitle: "Evaluation Artifacts",
+      evaluationArtifactsDescription: "Only the report and prediction outputs that directly explain this evaluation result.",
+      optimizationCoreArtifactsTitle: "Optimization Results",
+      optimizationCoreArtifactsDescription: "The main report and prediction outputs for comparing optimizer impact.",
+      optimizationPromptArtifactsTitle: "Prompt Outputs",
+      optimizationPromptArtifactsDescription: "Artifacts that show the optimized prompt and the before/after prompt diff.",
+      optimizationDebugArtifactsTitle: "Optimizer Debug Artifacts",
+      optimizationDebugArtifactsDescription: "Deeper optimizer internals such as compiled program state and extracted few-shot demos.",
+      advancedArtifactsToggle: "Open artifact browser",
       baselineCard: "Baseline",
       baselineHint: "Original prompt score",
       optimizedCard: "Optimized",
       optimizedHint: "Post-optimizer score",
       deltaCard: "Delta",
       deltaHint: "Optimization gain or regression",
+      evaluationScoreCard: "Evaluation Score",
+      evaluationScoreHint: "Overall score for the selected evaluation run",
+      evaluationExamplesCard: "Evaluated Examples",
+      evaluationExamplesHint: "How many examples were included in this evaluation",
+      evaluationMetricCard: "Metric",
+      evaluationMetricHint: "Scoring metric used for this evaluation",
       noExecutiveSummary: "No executive summary available.",
       selectSummaryEmpty: "Select a report to inspect its summary.",
       warnings: "Warnings",
@@ -320,6 +501,7 @@ export const messages = {
       failedExamplesEmpty: "No failed examples highlighted.",
       regressionExamples: "Regression Examples",
       regressionExamplesEmpty: "No regressions highlighted.",
+      regressionExamplesNotApplicable: "Regression examples only apply to optimization comparisons.",
       previewButton: "Preview",
       openFileButton: "Open File",
       loadArtifactsButton: "Load Report",
@@ -330,24 +512,90 @@ export const messages = {
       manifestEmpty: "No manifest loaded.",
       selectArtifactsEmpty: "Select a report to inspect its artifacts.",
       projectPrompt: "project {projectId} · prompt {promptId}",
+      optimizedPromptTitle: "Optimized Prompt",
+      optimizedPromptDescription:
+        "Read the final optimized prompt directly from the saved artifacts instead of opening raw JSON files one by one.",
+      optimizedSystemPrompt: "Optimized System Prompt",
+      optimizedUserTemplate: "Optimized User Template",
+      promptDiffSystem: "System Prompt Diff",
+      promptDiffUserTemplate: "User Template Diff",
+      optimizedPromptEmpty: "No derived prompt candidate artifact was found for this run.",
     },
-    runComparison: {
-      title: "Run Comparison",
+    tutorial: {
+      title: "How To Optimize A Prompt",
       description:
-        "Compare completed optimizer runs by baseline score, optimized score, and delta.",
-      compareButton: "Compare Selected Runs",
-      selectedRuns: "Selected: {count} run(s)",
-      baselineOptimized: "baseline {baseline} · optimized {optimized}",
-      runItemTitle: "#{id} · {optimizer}",
-      tableTitle: "Comparison Table",
-      tableDescription:
-        "Use this table to spot which optimizer configuration is actually improving the held-out score.",
+        "This walkthrough turns the product flow into a concrete optimization recipe so a new user can reach a final optimized prompt with less trial and error.",
+      prereqTitle: "Before You Start",
+      prereqBody:
+        "Create one project, prepare one dataset, and save at least one active prompt version.\nIf you plan to use a real model instead of mock mode, configure the backend model provider first.",
+      goalTitle: "Target Outcome",
+      goalBody:
+        "Run a baseline, launch an optimizer, then open the report page and inspect the final optimized system prompt, user template, and prompt diff.",
+      resultTitle: "What You Will Get",
+      resultBody:
+        "A completed optimization run with score deltas, regression examples, and a saved derived_prompt_candidate artifact you can reuse.",
+      stepsTitle: "Step-By-Step Workflow",
+      stepsDescription: "Follow the same route structure as the product UI so you always know where the next action lives.",
+      stepLabel: "Step {step}",
+      steps: [
+        {
+          title: "Define the task contract in Projects",
+          description:
+            "Pick a built-in task when possible. Only expand advanced JSON configuration if the default schema or metric does not match your task.",
+          href: "/projects",
+          cta: "Open Projects",
+        },
+        {
+          title: "Prepare data in the Dataset workspace",
+          description:
+            "Import real examples first when available. Synthetic generation is best used to bootstrap coverage or create extra training data for the optimizer.",
+          href: "/datasets",
+          cta: "Open Datasets",
+        },
+        {
+          title: "Create and validate a baseline prompt",
+          description:
+            "Save the prompt version you want to optimize. Run validation so template variables and output schema issues are visible before any evaluation or optimization run.",
+          href: "/prompts",
+          cta: "Open Prompt Studio",
+        },
+        {
+          title: "Run a baseline evaluation",
+          description:
+            "Use the Runs page in evaluation mode first. A baseline score tells you whether optimization is worth doing and gives you a reference point for later delta analysis.",
+          href: "/runs",
+          cta: "Open Runs",
+        },
+        {
+          title: "Launch an optimization run",
+          description:
+            "Switch the Runs page to optimization mode, choose the optimizer, and start with a light configuration. Use the same dataset and prompt so the score delta stays meaningful.",
+          href: "/runs",
+          cta: "Launch Optimization",
+        },
+        {
+          title: "Inspect the final optimized prompt in Reports",
+          description:
+            "Open the optimization report to compare baseline vs optimized scores, then read the dedicated optimized prompt card for the final system prompt, user template, and prompt diff.",
+          href: "/reports",
+          cta: "Open Reports",
+        },
+      ],
+      tipsTitle: "Practical Tips",
+      tipsDescription: "These shortcuts help avoid common low-signal optimization loops.",
+      tips: [
+        "Prefer a clean, reviewed dataset over a larger noisy dataset. Optimizers amplify label and format mistakes.",
+        "Run a baseline before every optimization experiment so the delta is attributable to the optimizer rather than a changed prompt or dataset.",
+        "Read regression examples before adopting the optimized prompt. A higher aggregate score can still hide bad failures in important cases.",
+        "If the optimized system prompt becomes too long or brittle, use the prompt diff to manually distill the useful instruction changes back into a cleaner prompt.",
+      ],
     },
   },
   zh: {
     app: {
       name: "Prompt Optimization Studio",
       shellTitle: "本地 Prompt 工作流控制台",
+      description: "用于 Prompt 评测与优化的本地工作流控制台",
       language: "语言",
       english: "English",
       chinese: "中文",
@@ -355,14 +603,12 @@ export const messages = {
     nav: {
       home: "总览",
       projects: "项目",
-      datasetGenerator: "数据生成",
-      datasetImport: "数据导入",
-      datasetEditor: "数据编辑",
+      customTasks: "自定义任务",
+      datasets: "数据集",
+      runs: "运行",
       prompts: "Prompt Studio",
-      evaluations: "基线评测",
-      optimizationRuns: "优化运行",
       reports: "报告",
-      runComparison: "运行对比",
+      tutorial: "教程",
     },
     common: {
       loadError: "加载失败",
@@ -391,10 +637,19 @@ export const messages = {
         cancel_requested: "取消中",
         active: "活跃",
         archived: "已归档",
-        accepted: "已接受",
-        rejected: "已拒绝",
-        unchecked: "未审核",
-        needs_review: "待复核",
+      },
+      split: {
+        train: "训练集",
+        dev: "验证集",
+        test: "测试集",
+        unassigned: "未分配",
+      },
+      datasetSource: {
+        manual_upload: "手动上传",
+        synthetic_generated: "合成生成",
+        edited: "编辑后",
+        imported: "导入",
+        manual: "手动",
       },
       workspace: {
         project: "项目",
@@ -408,7 +663,7 @@ export const messages = {
     home: {
       title: "Studio 总览",
       description:
-        "在一个首页里查看整个 prompt 优化流程：项目配置、数据集准备情况、基线质量、优化器进展，以及最近的执行信号。",
+        "从下一步工作流开始，而不是先面对底层资源列表。首页只保留大多数用户最先需要的引导和结果概览。",
       metrics: {
         activeProjects: "活跃项目",
         activeProjectsHint: "共 {count} 个项目定义",
@@ -430,14 +685,9 @@ export const messages = {
             description: "定义任务类型、schema 和默认 metric。",
           },
           {
-            href: "/datasets/import",
-            title: "导入数据集",
-            description: "导入真实样例，获得更可信的评测结果。",
-          },
-          {
-            href: "/datasets/generator",
-            title: "生成 Synthetic 数据",
-            description: "用当前配置的 LLM 快速启动一个数据集。",
+            href: "/datasets",
+            title: "准备数据集",
+            description: "在一个页面里导入真实样例，或生成 synthetic 起始数据。",
           },
           {
             href: "/prompts",
@@ -445,14 +695,9 @@ export const messages = {
             description: "版本化管理 Prompt，并校验输出约束。",
           },
           {
-            href: "/evaluations",
-            title: "运行基线评测",
-            description: "先检查可解析性和分数质量，再决定是否优化。",
-          },
-          {
-            href: "/optimization-runs",
-            title: "启动优化器",
-            description: "运行 BootstrapFewShot、MIPROv2 或 GEPA。",
+            href: "/runs",
+            title: "发起运行",
+            description: "在同一页面发起基线评测或优化运行。",
           },
         ],
       },
@@ -464,16 +709,28 @@ export const messages = {
         openReport: "打开报告查看器",
         empty: "暂时还没有成功完成的优化运行。",
       },
-      trustSnapshot: {
-        title: "数据可信度快照",
-        description: "快速查看哪些数据集是 synthetic-only、已人工审核，或适合做更高可信度评测。",
-        empty: "暂时没有数据集。",
-      },
-      recentLogs: {
-        title: "最近执行日志",
-        description: "跟踪最近的 worker、评测和优化运行状态。",
-        empty: "暂时没有最近日志。",
-      },
+      workflowTitle: "推荐工作流",
+      workflowDescription: "优先按主流程推进，把诊断和维护放到对应工作区里再打开。",
+      workflowSteps: [
+        {
+          title: "选择或创建项目",
+          description: "优先使用内置任务模板，只有确实需要时再展开高级 JSON 配置。",
+        },
+        {
+          title: "准备可用数据集",
+          description: "在同一个数据集工作区里完成导入、生成、样本查看和维护。",
+        },
+        {
+          title: "管理 Prompt 并发起运行",
+          description: "让 Prompt 编辑、基线评测和优化运行围绕工作流组织，而不是散落在多个资源页。",
+        },
+      ],
+      stepLabel: "步骤 {step}",
+      workspaceSnapshotTitle: "工作区快照",
+      workspaceSnapshotDescription: "用紧凑的计数摘要和最近优化运行，快速判断当前进度。",
+      workspaceSnapshotEmpty: "当前还没有工作区活动。",
+      latestRunsTitle: "最近优化运行",
+      latestRunsEmpty: "暂时还没有优化运行。",
     },
     projects: {
       registryTitle: "项目注册表",
@@ -482,9 +739,16 @@ export const messages = {
       namePlaceholder: "项目名称",
       taskKindBuiltin: "内置任务",
       taskKindCustom: "自定义任务",
-      taskDisplayName: "分类任务",
+      taskKeyPlaceholder: "task_key",
       descriptionPlaceholder: "业务背景",
-      taskDescriptionPlaceholder: "任务描述",
+      customTasksLink: "打开自定义任务页",
+      customTemplateEmpty: "当前还没有自定义任务模板，请先到独立页面创建。",
+      customTemplateRequired: "创建项目之前，请先选择一个自定义任务模板。",
+      readonlyConfigTitle: "任务契约默认值",
+      readonlyBuiltinHint: "这里展示的是当前内置任务的默认配置，在项目注册表里只读不可修改。",
+      readonlyCustomHint: "这里展示的是当前自定义任务模板的配置。如需修改，请前往自定义任务页。",
+      taskSummaryLabel: "任务",
+      taskDescriptionLabel: "任务描述",
       createButton: "创建项目",
       creatingButton: "创建中...",
       createdMessage: "已创建项目 #{id}",
@@ -492,6 +756,119 @@ export const messages = {
       workspaceDescription: "为整个控制台选择当前活跃项目。这个选择会保存在浏览器本地。",
       selectedSnapshot: "当前项目快照",
       selectedEmpty: "选择一个项目，查看它的 schema 和默认配置。",
+      builtinTaskText: {
+        qa: {
+          taskDisplayName: "问答任务",
+          taskDescription:
+            "基于给定文本回答问题，返回简洁答案，适合 FAQ、知识问答和检索后回答场景。",
+        },
+        json_generation: {
+          taskDisplayName: "JSON 生成",
+          taskDescription:
+            "生成符合指定结构的 JSON 对象，重点关注可解析性、字段完整性和 schema 一致性。",
+        },
+        rate: {
+          taskDisplayName: "评分任务",
+          taskDescription:
+            "根据评分标准为输入打分，返回数值分数和简要理由，适合质检、审核和偏好评估场景。",
+        },
+      },
+    },
+    customTasks: {
+      catalogTitle: "自定义任务模板",
+      catalogDescription: "把自定义 schema、metric 和报告配置从主流程中拆出来，统一在独立页面维护。",
+      newTemplateButton: "新建模板",
+      noTaskDescription: "当前没有任务描述。",
+      emptyState: "暂时还没有创建自定义任务模板。",
+      editorTitle: "模板编辑器",
+      editorDescription: "在这里定义完整的自定义任务契约，项目页只负责从这些模板里选择。",
+      draftTitle: "自然语言生成草稿",
+      draftDescription:
+        "直接描述你的任务目标，模型会生成整套任务契约草稿。每个配置项都需要你逐项确认后，才会写回编辑器。",
+      draftPromptPlaceholder:
+        "示例：做一个中文客服问答任务。输入是用户问题，输出字段是 answer，要求答案简洁，评测重点关注答案正确性。",
+      generateButton: "生成草稿",
+      generatingButton: "生成中...",
+      contractTitle: "任务契约逐项编辑",
+      contractDescription: "一次只展示一个配置项。可通过鼠标滚轮或左侧步骤导航逐项切换。",
+      scrollHint: "滚轮切换配置项",
+      stepCounter: "第 {current} / {total} 项",
+      detailCounter: "第 {current} / {total} 张内容卡",
+      configurableFieldsTitle: "可配置字段",
+      downstreamUsageTitle: "后续会如何被使用",
+      examplesTitle: "配置示例",
+      editorPaneTitle: "当前编辑区",
+      prevDetailButton: "上一张",
+      nextDetailButton: "下一张",
+      aiDraftTitle: "AI 草稿建议",
+      acceptCurrentButton: "接受当前项",
+      acceptAndNextButton: "接受并下一项",
+      skipCurrentButton: "跳过当前项",
+      draftAccepted: "已接受",
+      draftPending: "待确认",
+      noGuidanceForStep: "本项没有单独生成说明，请直接查看当前草稿内容。",
+      previewDescription: "这里展示当前内存中的任务契约；如果已选择已保存模板，则优先展示落盘结果。",
+      taskDisplayPlaceholder: "显示名称",
+      taskDescriptionPlaceholder: "任务描述",
+      saveButton: "保存模板",
+      deleteButton: "删除模板",
+      savedMessage: "自定义任务模板已保存。",
+      deletedMessage: "自定义任务模板已删除。",
+      previewTitle: "已保存预览",
+      previewEmpty: "保存一个模板后，这里会展示最终落盘的任务契约。",
+      steps: {
+        taskIdentity: {
+          title: "任务基础信息",
+          summary:
+            "这一项定义模板的身份与用途，是项目页选择模板时最先看到的信息。名称要清晰，描述要能说明任务边界和目标输出。",
+          usage1: "项目创建时会用它来展示模板名称、说明和可选项。",
+          usage2: "task_key 会作为稳定标识，供项目、数据集和后续运行配置引用。",
+          usage3: "任务描述会帮助人和模型快速理解这个模板到底解决什么问题。",
+        },
+        inputSchema: {
+          title: "输入 Schema",
+          summary:
+            "这一项定义每条样本输入必须长什么样。通常要求顶层是 object，并把真实需要的字段收敛到最小集合。",
+          usage1: "导入数据集时，会用它校验 input_json 是否符合约定结构。",
+          usage2: "Prompt 模板和后续变量映射会据此判断允许引用哪些输入字段。",
+          usage3: "合成数据生成与后续表单化工具也会依赖这个输入结构。",
+        },
+        outputSchema: {
+          title: "输出 Schema",
+          summary:
+            "这一项定义模型应该返回什么 JSON。后面的 metric、task_definition、report_profile 都应围绕这里的字段来对齐。",
+          usage1: "评测时会用它解析模型输出，并识别 parse_error 或 schema_error。",
+          usage2: "默认指标会从这里选择要比较的字段。",
+          usage3: "报告摘要会依据这里的主输出字段做展示和解释。",
+        },
+        metric: {
+          title: "评测配置",
+          summary:
+            "这一项决定系统如何计算模型输出是否正确。metric 类型、目标字段、阈值等都会直接影响评测分数和优化目标。",
+          usage1: "评测运行会按这里定义的 metric 计算 score 和 correct。",
+          usage2: "阈值会影响样本是否被判为通过，以及后续优化反馈方向。",
+          usage3: "如果 field 配错，评测会对不上输出字段，导致结果不可用。",
+        },
+        taskDefinition: {
+          title: "任务定义",
+          summary:
+            "这一项补充任务语义，告诉系统这个自定义任务的主目标字段是什么，以及有哪些任务级约束。",
+          usage1: "帮助任务相关服务识别核心预测字段。",
+          usage2: "为后续优化、生成和报告提供任务层语义上下文。",
+          usage3: "便于以后扩展更多 task_family 相关行为，而不破坏当前模板结构。",
+        },
+        reportProfile: {
+          title: "报告配置",
+          summary:
+            "这一项控制报告如何突出主输出字段以及哪些质量维度最值得关注，决定后续摘要展示的方向。",
+          usage1: "评测和优化报告会据此高亮 primary_output_field。",
+          usage2: "focus_areas 会影响未来报告摘要中强调的问题类型。",
+          usage3: "它让报告展示与任务目标保持一致，不会只停留在原始 score。",
+        },
+      },
+      detailCards: {
+        summary: "说明",
+      },
     },
     prompts: {
       title: "Prompt Studio",
@@ -499,9 +876,6 @@ export const messages = {
       createTitle: "创建 Prompt 版本",
       createDescription: "为当前活跃项目创建一个新的 Prompt 记录。",
       promptNameDefault: "baseline",
-      statusDraft: "草稿",
-      statusActive: "启用",
-      statusArchived: "归档",
       defaultSystemPrompt: "你是一个精准的任务助手。",
       defaultUserTemplate: "请对下面请求进行分类：\n{text}",
       saveButton: "保存 Prompt",
@@ -516,10 +890,28 @@ export const messages = {
       validationOutput: "校验结果",
     },
     datasets: {
+      hub: {
+        title: "数据集工作区",
+        description:
+          "把数据导入、synthetic 生成、当前数据集选择和维护工具收敛到一个页面里。高级审核工具仍然保留，但不再占主路径。",
+        prepareTitle: "准备数据集",
+        prepareDescription: "在同一页面切换导入和 synthetic 生成，不必来回跳转。",
+        importTab: "导入",
+        generateTab: "生成",
+        lastActionTitle: "最近一次操作返回",
+        lastActionEmpty: "执行一次导入或生成后，在这里查看后端返回。",
+        listTitle: "项目数据集",
+        listDescription: "保持数据集选择可见，同时避免把编辑页单独抬成一级入口。",
+        selectedDatasetTitle: "当前数据集快照",
+        selectedDatasetEmpty: "选择一个数据集查看元数据。",
+        advancedTitle: "高级数据维护工具",
+        advancedDescription: "质量报告、样本编辑和重新切分按需展开。",
+        advancedToggle: "打开维护工具",
+      },
       generator: {
         title: "数据生成",
         description:
-          "通过后端生成 synthetic 数据集。当后端环境已配置好时，可以把 `generation_model` 切换成 OpenAI-compatible 模型。",
+          "通过后端生成 synthetic 数据集。主流程直接使用后端环境配置，不再在页面里暴露模型选择。",
         formTitle: "生成 Synthetic 数据集",
         formDescription: "用自然语言命令为当前项目生成一个 synthetic 数据集。",
         defaultName: "synthetic-baseline",
@@ -555,12 +947,10 @@ export const messages = {
       },
       editor: {
         title: "数据编辑器",
-        description: "查看已导入或已生成的样例，重拆 split，并批量审核前一批样本。",
+        description: "查看已导入或已生成的样例，重拆 split，并直接调整样本内容。",
         previewTitle: "样例预览",
-        previewDescription: "当前编辑器会通过 API 拉取前 100 条记录，并支持快速审核、编辑和重拆 split。",
+        previewDescription: "当前编辑器会通过 API 拉取前 100 条记录，并支持快速编辑内容和重拆 split。",
         refreshExamples: "刷新样例",
-        acceptFirst20: "接受前 20 条",
-        markFirst20NeedsReview: "前 20 条标记为待复核",
         resplit: "重新拆分 60 / 20 / 20",
         diagnosticsTitle: "数据诊断",
         diagnosticsDescription: "在发起评测或优化前，先查看质量报告和数据集元数据。",
@@ -575,9 +965,9 @@ export const messages = {
     },
     evaluations: {
       title: "基线评测",
-      description: "排队运行 baseline，支持在 mock 和真实 OpenAI/OpenAI-compatible 执行之间切换，并在一个页面里查看日志和报告。",
+      description: "排队运行 baseline，自动使用项目默认 metric 和后端模型配置，并在一个页面里查看日志和报告。",
       queueTitle: "创建评测任务",
-      queueDescription: "后端环境配置好之后，可以把 `provider=openai` 与 OpenAI-compatible 模型一起使用。",
+      queueDescription: "评测会自动使用项目默认 metric，以及后端环境里配置的模型调用链路。",
       queueButton: "创建评测任务",
       queuedMessage: "已创建评测任务 #{id}",
       workerProcessed: "Worker 已处理 {count} 个任务。",
@@ -595,9 +985,9 @@ export const messages = {
     },
     optimization: {
       title: "优化运行",
-      description: "排队运行 BootstrapFewShot、MIPROv2 或 GEPA。把 `provider=openai` 和 OpenAI-compatible 模型一起使用，就会命中真实 DSPy 路径。",
+      description: "排队运行 BootstrapFewShot、MIPROv2 或 GEPA。运行时模型选择统一走后端环境配置。",
       queueTitle: "创建优化任务",
-      queueDescription: "可以直接在 UI 中调整 metric 和 optimizer 配置。GEPA 支持通过 metric config JSON 传入 feedback-rich metric。",
+      queueDescription: "运行会自动使用项目默认 metric，UI 只保留 optimizer 高级参数配置。",
       queueButton: "创建优化任务",
       queuedMessage: "已创建优化任务 #{id}",
       workerProcessed: "Worker 已处理 {count} 个任务。",
@@ -613,6 +1003,26 @@ export const messages = {
       logsEmpty: "选择一个优化运行来加载日志。",
       selectError: "创建优化任务前请先选择项目、数据集和 Prompt。",
     },
+    runs: {
+      hub: {
+        title: "运行工作区",
+        description:
+          "在一个页面里发起评测和优化运行，需要调试时再展开原始日志和原始报告。",
+        launchTitle: "发起运行",
+        launchDescription: "先选运行类型，再填写对应工作流需要的参数。",
+        evaluationTab: "评测",
+        optimizationTab: "优化",
+        queueTitle: "最近队列",
+        queueDescription: "在创建运行的同一页面里跟踪状态，不再跳多个资源页。",
+        advancedTitle: "高级诊断",
+        advancedDescription: "原始报告和执行日志继续保留，但默认不打断主流程。",
+        advancedToggle: "打开诊断信息",
+        selectedRunTitle: "当前运行快照",
+        selectedRunEmpty: "从队列里选择一个运行后，在这里查看详情。",
+        reportTitle: "已存储报告",
+        logsTitle: "运行日志",
+      },
+    },
     reports: {
       title: "报告查看器",
       description: "浏览已持久化的评测和优化报告，并进一步查看单个 artifact 文件。",
@@ -627,13 +1037,28 @@ export const messages = {
       warningsTitle: "警告与失败样本",
       warningsDescription: "在信任分数之前，先看风险警告、失败样本和 regression。",
       artifactsTitle: "产物",
-      artifactsDescription: "浏览生成出的 artifacts，支持内联预览，也可以直接打开原始文件。",
+      artifactsDescription: "当你需要更深入调试时，可以继续浏览 artifacts、内联预览内容，或直接打开原始文件。",
+      evaluationArtifactsTitle: "评测相关产物",
+      evaluationArtifactsDescription: "只展示直接解释本次评测结果的报告和预测输出。",
+      optimizationCoreArtifactsTitle: "优化结果产物",
+      optimizationCoreArtifactsDescription: "用于查看优化效果对比的主报告和预测输出。",
+      optimizationPromptArtifactsTitle: "提示词产物",
+      optimizationPromptArtifactsDescription: "展示平台推导出的候选 Prompt 以及前后差异的产物。",
+      optimizationDebugArtifactsTitle: "优化调试产物",
+      optimizationDebugArtifactsDescription: "更底层的优化器内部状态，例如编译结果和 few-shot demos。",
+      advancedArtifactsToggle: "打开 artifact 浏览器",
       baselineCard: "基线",
       baselineHint: "原始 Prompt 分数",
       optimizedCard: "优化后",
       optimizedHint: "优化器运行后的分数",
       deltaCard: "变化值",
       deltaHint: "优化收益或回退",
+      evaluationScoreCard: "评测分数",
+      evaluationScoreHint: "当前评测任务的总体得分",
+      evaluationExamplesCard: "评测样本数",
+      evaluationExamplesHint: "这次评测纳入计算的样本数量",
+      evaluationMetricCard: "评测指标",
+      evaluationMetricHint: "当前评测使用的打分指标",
       noExecutiveSummary: "暂无执行摘要。",
       selectSummaryEmpty: "选择一个报告查看摘要。",
       warnings: "警告",
@@ -642,6 +1067,7 @@ export const messages = {
       failedExamplesEmpty: "没有标记失败样本。",
       regressionExamples: "回退样本",
       regressionExamplesEmpty: "没有标记 regression 样本。",
+      regressionExamplesNotApplicable: "回退样本只适用于优化前后对比。",
       previewButton: "预览",
       openFileButton: "打开文件",
       loadArtifactsButton: "加载报告",
@@ -652,16 +1078,83 @@ export const messages = {
       manifestEmpty: "当前没有加载 manifest。",
       selectArtifactsEmpty: "选择一个报告查看它的 artifacts。",
       projectPrompt: "项目 {projectId} · Prompt {promptId}",
+      optimizedPromptTitle: "优化后提示词",
+      optimizedPromptDescription:
+        "直接从已保存 artifacts 中读取平台推导的候选 Prompt 结果，不需要再手动打开多个原始 JSON 文件。",
+      optimizedSystemPrompt: "优化后 System Prompt",
+      optimizedUserTemplate: "优化后 User Template",
+      promptDiffSystem: "System Prompt 对比",
+      promptDiffUserTemplate: "User Template 对比",
+      optimizedPromptEmpty: "当前运行没有找到 derived_prompt_candidate artifact。",
     },
-    runComparison: {
-      title: "运行对比",
-      description: "按 baseline、optimized 和 delta 对比多个已完成的优化运行。",
-      compareButton: "对比已选运行",
-      selectedRuns: "已选择：{count} 个运行",
-      baselineOptimized: "基线 {baseline} · 优化后 {optimized}",
-      runItemTitle: "#{id} · {optimizer}",
-      tableTitle: "对比表",
-      tableDescription: "用这个表快速看出哪个优化器配置真的提升了 held-out 分数。",
+    tutorial: {
+      title: "如何完成一次提示词优化",
+      description:
+        "把产品里的主要操作路径整理成一套清晰教程，帮助新用户更快拿到最终优化后的提示词。",
+      prereqTitle: "开始前准备",
+      prereqBody:
+        "先创建一个项目、准备一个数据集，并至少保存一个启用状态的 Prompt 版本。\n如果你打算使用真实模型而不是 mock 模式，请先配置后端模型提供方。",
+      goalTitle: "目标结果",
+      goalBody:
+        "先跑基线评测，再发起优化运行，最后到报告页里查看最终优化后的 system prompt、user template 和 prompt diff。",
+      resultTitle: "最终产物",
+      resultBody:
+        "你会得到一条完整的优化运行记录，包括分数变化、回退样本，以及可以直接复用的 derived_prompt_candidate artifact。",
+      stepsTitle: "逐步操作流程",
+      stepsDescription: "教程中的路径与产品导航一致，方便你边看边操作。",
+      stepLabel: "步骤 {step}",
+      steps: [
+        {
+          title: "先在 Projects 里定义任务契约",
+          description:
+            "能用内置任务就优先用内置任务。只有默认 schema 或 metric 不符合你的任务时，再展开高级 JSON 配置。",
+          href: "/projects",
+          cta: "打开 Projects",
+        },
+        {
+          title: "在 Dataset 工作区准备数据",
+          description:
+            "有真实样例时优先导入真实数据。Synthetic 生成更适合补齐覆盖范围，或为优化器准备额外训练样本。",
+          href: "/datasets",
+          cta: "打开 Datasets",
+        },
+        {
+          title: "创建并校验基线 Prompt",
+          description:
+            "先保存你准备优化的 Prompt 版本，再运行校验，确保模板变量和输出 schema 问题在评测前就暴露出来。",
+          href: "/prompts",
+          cta: "打开 Prompt Studio",
+        },
+        {
+          title: "先跑一次基线评测",
+          description:
+            "先在 Runs 页的评测模式下执行 baseline。这样你能先看到初始分数，也能为后面的优化增益提供参照。",
+          href: "/runs",
+          cta: "打开 Runs",
+        },
+        {
+          title: "再发起优化运行",
+          description:
+            "切换到 Runs 页的优化模式，选择优化器并从较轻量的配置开始。尽量保持数据集和 Prompt 不变，这样分数变化才有意义。",
+          href: "/runs",
+          cta: "发起优化",
+        },
+        {
+          title: "在 Reports 里查看最终优化后提示词",
+          description:
+            "打开优化报告，先看 baseline 与 optimized 分数，再查看专门的提示词卡片，直接读取最终 system prompt、user template 和 prompt diff。",
+          href: "/reports",
+          cta: "打开 Reports",
+        },
+      ],
+      tipsTitle: "实用建议",
+      tipsDescription: "这些建议能减少低价值的优化循环。",
+      tips: [
+        "优先保证数据集干净、可审查，再追求数据量。优化器会放大标签和格式错误。",
+        "每次发起优化前先跑 baseline，避免把分数变化误归因到优化器之外的改动。",
+        "在采用优化后提示词前，先读 regression examples。总分上升不代表关键案例没有变差。",
+        "如果优化后的 system prompt 变得过长或过脆弱，可以根据 prompt diff 手工提炼真正有价值的指令变化，回写成更干净的 Prompt。",
+      ],
     },
   },
 } as const;

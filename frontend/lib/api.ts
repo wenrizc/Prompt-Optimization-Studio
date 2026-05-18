@@ -15,6 +15,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     const text = await response.text();
     throw new Error(text || `Request failed: ${response.status}`);
   }
+  if (response.status === 204) {
+    return undefined as T;
+  }
   return response.json() as Promise<T>;
 }
 
@@ -24,5 +27,6 @@ export const api = {
     request<T>(path, { method: "POST", body: JSON.stringify(body) }),
   patch: <T>(path: string, body: unknown) =>
     request<T>(path, { method: "PATCH", body: JSON.stringify(body) }),
+  delete: <T>(path: string) => request<T>(path, { method: "DELETE" }),
   url: (path: string) => `${API_BASE_URL}${path}`,
 };

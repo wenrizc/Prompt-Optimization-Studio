@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm /home/zhaocm/projects/Prompt-Optimization-Studio/backend/prompt_optimization_studio/api/routes/health.py)",
+      "Bash(rm /home/zhaocm/projects/Prompt-Optimization-Studio/backend/prompt_optimization_studio/schemas/health.py)"
+    ]
+  }
+}

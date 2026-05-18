@@ -29,13 +29,11 @@ dev = [
 ]
 
 [project.scripts]
-studio-api = "prompt_optimization_studio.cli:main"
-
-[tool.setuptools]
-package-dir = {"" = "backend"}
+studio-api = "backend.cli:main"
 
 [tool.setuptools.packages.find]
-where = ["backend"]
+where = ["."]
+include = ["backend*"]
 
 [tool.uv]
 package = true
@@ -43,6 +41,37 @@ package = true
 [tool.ruff]
 line-length = 100
 target-version = "py311"
+src = ["backend", "alembic"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
 
 [tool.ruff.lint]
-select = ["E", "F", "I", "B", "UP"]
+select = [
+  "E",    # pycodestyle errors
+  "W",    # pycodestyle warnings
+  "F",    # pyflakes
+  "I",    # isort
+  "B",    # flake8-bugbear
+  "UP",   # pyupgrade
+  "SIM",  # flake8-simplify
+  "TCH",  # flake8-type-checking
+  "RUF",  # ruff-specific rules
+]
+
+ignore = [
+  "E501",   # line too long (handled by formatter)
+  "B008",   # function-call-in-default-argument (FastAPI Depends pattern)
+  "RUF001", # allow Chinese full-width punctuation in strings
+  "RUF002", # allow Chinese full-width punctuation in docstrings
+  "RUF003", # allow Chinese full-width punctuation in comments
+]
+
+[tool.ruff.lint.isort]
+known-first-party = ["backend"]
+
+[tool.ruff.lint.per-file-ignores]
+"alembic/versions/*.py" = ["RUF012"]
+"tests/*.py" = ["E402"]

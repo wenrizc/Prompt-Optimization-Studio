@@ -16,6 +16,49 @@ export type Project = {
   status: string;
 };
 
+export type BuiltinTaskTemplate = {
+  task_key: string;
+  task_display_name: string;
+  task_description: string | null;
+  input_schema_json: Record<string, unknown>;
+  output_schema_json: Record<string, unknown>;
+  default_metric_config_json: Record<string, unknown>;
+  task_definition_json: Record<string, unknown>;
+  report_profile_json: Record<string, unknown>;
+};
+
+export type CustomTaskTemplate = BuiltinTaskTemplate & {
+  id: number;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CustomTaskTemplateGuidanceItem = {
+  title: string;
+  summary: string;
+  configurable_fields: string[];
+  downstream_usage: string[];
+  examples: Record<string, unknown>[];
+  notes: string[];
+};
+
+export type GeneratedCustomTaskTemplateDraft = {
+  draft: {
+    task_key: string;
+    task_display_name: string;
+    task_description: string | null;
+    input_schema_json: Record<string, unknown>;
+    output_schema_json: Record<string, unknown>;
+    default_metric_config_json: Record<string, unknown>;
+    task_definition_json: Record<string, unknown>;
+    report_profile_json: Record<string, unknown>;
+  };
+  guidance: {
+    overview: string;
+    items: Record<string, CustomTaskTemplateGuidanceItem>;
+  };
+};
+
 export type Dataset = {
   id: number;
   project_id: number;
@@ -37,7 +80,6 @@ export type PromptRecord = {
   user_template: string;
   output_schema_json: Record<string, unknown>;
   version: number;
-  status: string;
 };
 
 export type EvaluationRecord = {
@@ -77,7 +119,6 @@ export type DatasetExample = {
   input_json: Record<string, unknown>;
   expected_output_json: Record<string, unknown>;
   metadata_json: Record<string, unknown>;
-  quality_status: string;
   content_hash: string;
 };
 
@@ -100,15 +141,6 @@ export type RunLogRecord = {
   data_json: Record<string, unknown> | null;
   created_at: string;
 };
-
-export const DEFAULT_LLM_PROVIDER =
-  process.env.NEXT_PUBLIC_DEFAULT_LLM_PROVIDER ?? "openai";
-
-export const DEFAULT_LLM_MODEL =
-  process.env.NEXT_PUBLIC_DEFAULT_LLM_MODEL ?? "deepseek-v4-pro";
-
-export const DEFAULT_GENERATION_MODEL =
-  process.env.NEXT_PUBLIC_DEFAULT_GENERATION_MODEL ?? DEFAULT_LLM_MODEL;
 
 export function toErrorMessage(error: unknown): string {
   if (error instanceof Error) {

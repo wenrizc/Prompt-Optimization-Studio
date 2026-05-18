@@ -11,24 +11,44 @@
 - artifact 持久化、manifest 与文件下载
 - Next.js 前端工作流控制台与总览仪表盘
 
-## Backend
+## 快速启动
+
+### 1. 安装依赖
 
 ```bash
+# 后端
 uv sync --extra dev
+
+# 前端
+cd frontend && npm install && cd ..
+```
+
+### 2. 数据库迁移
+
+```bash
 uv run alembic upgrade head
+```
+
+### 3. 构建前端静态文件
+
+```bash
+cd frontend && npm run build && cd ..
+```
+
+构建产物在 `frontend/out/`，FastAPI 启动时会自动挂载该目录。
+
+### 4. 启动后端（同时提供前端和 API）
+
+```bash
 uv run studio-api --reload
 ```
+
+访问 http://127.0.0.1:8000 ，浏览器会自动跳转到对应语言页面（`/en/` 或 `/zh/`）。
 
 如果你想显式指定地址：
 
 ```bash
 uv run studio-api --reload --host 127.0.0.1 --port 8000
-```
-
-后端默认地址：
-
-```text
-http://127.0.0.1:8000
 ```
 
 健康检查：
@@ -37,21 +57,17 @@ http://127.0.0.1:8000
 GET /health
 ```
 
-## Frontend
+### 前端开发模式
+
+如果需要前端热更新开发，可以单独启动 dev server：
 
 ```bash
-cd frontend
-npm install
-npm run dev
+cd frontend && npm run dev
 ```
 
-前端默认地址：
+dev server 默认地址：http://127.0.0.1:3000
 
-```text
-http://127.0.0.1:3000
-```
-
-如果后端地址不同，可设置：
+后端地址不同时可设置：
 
 ```text
 NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
@@ -60,6 +76,7 @@ NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 ## 当前已实现
 
 - 项目 CRUD
+- 内置任务模板目录（`classification` / `extraction` / `qa` / `json_generation` / `rewriting` / `rate`）
 - Prompt 校验与版本化
 - Dataset 创建、导入、样例编辑、批量审核、split
 - Dataset split、重复检查、质量摘要
@@ -69,12 +86,65 @@ NEXT_PUBLIC_API_BASE_URL=http://127.0.0.1:8000
 - 评测与优化报告的 executive summary、风险提示、artifact 清单、失败样本与 regression 查看
 - Next.js 多页面前端工作流、首页总览仪表盘、报告查看器
 
+## 内置任务模板
+
+项目创建页现在内置了 6 种任务模板：
+
+- `classification`
+- `extraction`
+- `qa`
+- `json_generation`
+- `rewriting`
+- `rate`
+
+每个内置任务都会自带：
+
+- `task_display_name`
+- `task_description`
+- `input_schema_json`
+- `output_schema_json`
+- `default_metric_config_json`
+- `task_definition_json`
+- `report_profile_json`
+
+行为规则如下：
+
+- 前端选择内置任务后，会自动把上述字段填成对应模板
+- 这些字段在前端仍然可以继续手动修改
+- 提交时，以用户当前编辑后的值为准
+- 如果调用后端 API 创建内置任务项目时省略了这些字段，后端会自动按所选内置任务兜底填充
+- 如果调用方显式传入了这些字段，后端不会覆盖它们
+
+可通过以下接口读取当前内置任务目录：
+
+```text
+GET /api/v1/projects/builtin-tasks
+```
+
+如需按语言获取任务显示名和任务描述，可带上 `locale`：
+
+```text
+GET /api/v1/projects/builtin-tasks?locale=en
+GET /api/v1/projects/builtin-tasks?locale=zh
+```
+
+调用项目创建接口时，也可以传入可选的 `template_locale`，让后端兜底填充的默认 `task_display_name` / `task_description` 跟随语言：
+
+```json
+{
+  "name": "中文分类项目",
+  "task_kind": "builtin",
+  "task_key": "classification",
+  "template_locale": "zh"
+}
+```
+
 ## 执行模式
 
-为了保证本地无额外依赖也能跑通闭环，系统同时支持：
+为了保证本地无额外依赖也能跑通闭环，后端会根据环境自动选择执行模式：
 
-- `provider=mock`
-- `provider=openai`
+- 未配置 `OPENAI_API_KEY` 时回退到 `mock`
+- 配置了 `OPENAI_API_KEY` 后走 `openai` / OpenAI-compatible 路径
 
 其中：
 
@@ -94,23 +164,34 @@ OPENAI_BASE_URL=...
 OPENAI_DEFAULT_MODEL=deepseek-v4-pro
 ```
 
-前端也支持默认模型和 provider：
+前端只保留生成数据集的默认模型配置：
 
 ```text
-NEXT_PUBLIC_DEFAULT_LLM_PROVIDER=openai
-NEXT_PUBLIC_DEFAULT_LLM_MODEL=deepseek-v4-pro
 NEXT_PUBLIC_DEFAULT_GENERATION_MODEL=deepseek-v4-pro
 ```
 
-创建 evaluation / optimization run 时可以直接传入：
+创建项目时应配置默认 `metric`，运行页会自动复用该配置；创建 evaluation /
+optimization run 时不再手动传入模型 provider、model、random_seed 或 metric：
 
 ```json
 {
-  "model_config_json": {
-    "provider": "openai",
-    "model": "deepseek-v4-pro",
-    "temperature": 0,
-    "max_tokens": 4000
+  "project_id": 1,
+  "dataset_id": 1,
+  "prompt_id": 1
+}
+```
+
+优化运行仍可额外传入：
+
+```json
+{
+  "project_id": 1,
+  "dataset_id": 1,
+  "prompt_id": 1,
+  "optimizer_name": "bootstrap_fewshot",
+  "optimizer_config_snapshot_json": {
+    "max_labeled_demos": 4,
+    "max_bootstrapped_demos": 4
   }
 }
 ```
@@ -206,9 +287,10 @@ uv sync --extra dev
 uv run alembic upgrade head
 ```
 
-启动后端：
+构建前端并启动：
 
 ```bash
+cd frontend && npm run build && cd ..
 uv run studio-api --reload
 ```
 
