@@ -1,0 +1,48 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "prompt-optimization-studio"
+version = "0.1.0"
+description = "Local Prompt Optimization Studio backend"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "alembic>=1.14.0",
+  "dspy>=3.1.3",
+  "fastapi>=0.116.0",
+  "openai>=1.82.0",
+  "orjson>=3.10.0",
+  "pydantic-settings>=2.6.0",
+  "python-dotenv>=1.0.1",
+  "sqlalchemy>=2.0.36",
+  "tenacity>=9.0.0",
+  "uvicorn[standard]>=0.32.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3.0",
+  "httpx>=0.28.0",
+  "ruff>=0.8.0",
+]
+
+[project.scripts]
+studio-api = "prompt_optimization_studio.cli:main"
+
+[tool.setuptools]
+package-dir = {"" = "backend"}
+
+[tool.setuptools.packages.find]
+where = ["backend"]
+
+[tool.uv]
+package = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
